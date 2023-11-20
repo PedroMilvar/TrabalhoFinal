@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Conta</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="../../bootstrap/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../style.css" />
+    <link rel="stylesheet" type="text/css" href="credenciais.css" />
+</head>
+
+<body>
+
+    <header>
+        <div>
+            <a href="/index.html">
+                <img src="/img/logo.png" alt="Logo" height="60" width="250">
+            </a>
+        </div>
+        <nav class="navbar navbar-expand-lg navbar-light cor_menu">
+            <div class="container">
+                <a class="navbar-brand" href="/index.html">Página Inicial</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/sobre.html">Sobre</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/privada/login/login.html">
+                                <L>Login</L>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div id="mensagem-container"></div>
+        <form action="../../../cadastroProfessor.php" method="POST" onsubmit="return validarFormulario()">
+            <div class="login-form">
+                <div class="input-container">
+                    <label for="email">USUÁRIO</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <label for="password">SENHA</label>
+                    <input type="password" id="password" name="senha" required>
+
+                    <label for="password">Repetir Senha</label>
+                    <input type="password" id="confirmPassword" required>
+
+                    <input class="btn btn-success mt-5" type="submit" value="Cadastrar">
+                </div>
+            </div>
+        </form>
+    </main>
+    <footer class="bg-black text-white text-center fixed-bottom">
+        <p>© Copyright 2023. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        function validarSenha() {
+            var senha = document.getElementById("password").value;
+            var confirmarSenha = document.getElementById("confirmPassword").value;
+
+            if (senha !== confirmarSenha) {
+                exibirMensagem("As senhas não coincidem.", "danger");
+                return false;
+            }
+            return true;
+        }
+
+        function exibirMensagem(mensagem, tipo) {
+            var container = document.getElementById("mensagem-container");
+            container.innerHTML = '<div class="alert alert-' + tipo + ' mt-3" role="alert">' + mensagem + '</div>';
+        }
+
+        function validarFormulario() {
+            // Realiza a validação no lado do cliente antes de enviar o formulário
+            if (!validarSenha()) {
+                return false; // Evita o envio do formulário se a validação falhar
+            }
+
+            // Envie o formulário via AJAX para o PHP
+            $.ajax({
+                type: "POST",
+                url: "../../../cadastroProfessor.php",
+                data: $("form").serialize(),
+                dataType: "json",
+                success: function (response) {
+                    // Trata a resposta do servidor
+                    if (response.status === "success") {
+                        exibirMensagem(response.message, "success");
+                        // Redireciona ou realiza outras ações desejadas
+                    } else {
+                        exibirMensagem(response.message, "danger");
+                    }
+                },
+                error: function () {
+                    exibirMensagem("Erro ao processar a solicitação.", "danger");
+                }
+            });
+
+            return false; // Evita o envio tradicional do formulário
+        }
+    </script>
+
+</body>
+
+</html>
